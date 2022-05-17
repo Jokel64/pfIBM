@@ -1,0 +1,98 @@
+from enum import Enum
+from uuid import UUID
+from typing import List
+from datetime import datetime
+
+
+class OccupantMotionStatus(Enum):
+    UNKNOWN = 0
+    SITTING = 1
+    MOVING = 2
+
+
+class CalendarEntry:
+    def __init__(self):
+        # The time when the event is scheduled to start
+        self.event_start: datetime = None
+
+        # The time when the event is scheduled to end
+        self.event_stop: datetime = None
+
+        # The friendly name of the meeting room. If no room is used this field is left empty
+        self.booked_meeting_room: str = None
+
+        # If the beamer is planned to use in this meeting the beamer and the screen are prepared and turned on
+        self.is_beamer_used: bool = False
+
+
+class Calendar:
+    def __init__(self):
+        # This field is set to true if calendar data is provided py the users phone
+        self.calendar_provided: bool = False
+
+        # The time to which datetime the events are fetched from the device
+        self.calendar_valid: datetime = datetime.now()
+
+        # This field contains all the calendar entries of the occupant
+        self.calendar_entries: List[CalendarEntry] = list()
+
+        # In this field the estimated time when the occupant stops working is stored
+        self.work_end: datetime = datetime()
+
+        # In this field the next work start time is stored (eg. earliest meeting or defined as a seperate event)
+        self.next_work_start: datetime = datetime()
+
+
+class LightingCondition(Enum):
+    UNKNOWN = 0  # We don't know the preference of the user
+    BIO_CYCLE = 1  # Occupant wants light adapted to current weather time etc.. (AI-Planning)
+    SELF_CONTROLLED = 2  # Occupant wants to control the light
+
+
+class HVACCondition:
+    def __init__(self):
+        self.target_temperature: int = 21  # The Target Temperature the user wants for the office room
+        self.allow_cooling: bool = True  # Maybe the user does not want cooling
+
+
+class ShadingConditions(Enum):
+    UNKNOWN = 0  # We don't know the preference
+    AS_DARK_AS_POSSIBLE = 1  # Occupant want's as less sun as possible in the office
+    AS_LIGHT_AS_POSSIBLE = 2  # Occupant want's as much sun as possible in the office
+    SELF_CONTROLLED = 2  # Occupant want's to control the shades
+
+
+class OccupantInformation:
+    def __init__(self):
+        # This is the session id of the user which stays only the same while the occupant is in the room
+        # it changes if the user leaves and re-enters the room
+        self.session_id: UUID = None
+
+        # This item stores the preferred lightning scenario of the occupant
+        self.preferred_lighting_condition: LightingCondition = LightingCondition.UNKNOWN
+
+        # This item stores the preferred shading conditions of the occupant
+        self.preferred_shading_condition: ShadingConditions = ShadingConditions.UNKNOWN
+
+        # This item stores the preferred hvac settings of the occupant
+        self.preferred_hvac_condition: HVACCondition = HVACCondition()
+
+        # This item is used to store the occupants current motion state
+        self.occupant_motion_status: OccupantMotionStatus = OccupantMotionStatus.UNKNOWN
+
+        # This item the calendar data of the user is shared
+        self.calendar: Calendar = Calendar()
+
+
+class SmartphoneInterface:
+    def __init__(self):
+        self.occupants: List[OccupantInformation] = list()
+
+    def send_push_notification(self, notification: str):
+        pass
+
+    def set_room_state_object(self):
+        pass
+
+    def get_current_occupants_information(self):
+        return self.occupants
