@@ -1,5 +1,3 @@
-import time
-
 import flask
 from flask import jsonify
 from flask_cors import CORS
@@ -12,12 +10,7 @@ menu_items = [
         "name": "Dashboard",
         "tooltip": "This is the dashboard",
         "icon": "bx-grid-alt"
-    },
-    {
-        "name": "Settings",
-        "tooltip": "Settings are here",
-        "icon": "bx-grid-alt"
-}
+    }
 ]
 
 CORS(app, resources={r'/*': {'origins': '*'}})
