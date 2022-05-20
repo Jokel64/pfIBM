@@ -1,8 +1,12 @@
 import flask
 from flask import jsonify
 from flask_cors import CORS
+import logging as lg
+from room_controller import RoomController
 
 app = flask.Flask(__name__)
+CORS(app, resources={r'/*': {'origins': '*'}})
+
 app.config["DEBUG"] = True
 
 menu_items = [
@@ -10,10 +14,29 @@ menu_items = [
         "name": "Dashboard",
         "tooltip": "This is the dashboard",
         "icon": "bx-grid-alt"
-    }
+    },
+    {
+        "name": "Gateways",
+        "tooltip": "Gateways",
+        "icon": "bx-grid-alt"
+    },
+    {
+        "name": "Devices",
+        "tooltip": "Devices",
+        "icon": "bx-grid-alt"
+    },
 ]
 
-CORS(app, resources={r'/*': {'origins': '*'}})
+ctl: RoomController = None
+
+
+def set_room_controller(room_controller: RoomController):
+    global ctl
+    ctl = room_controller
+
+
+def append_dict_item(l: list, name: str, value):
+    l.append({"name": name, "value": value})
 
 
 @app.route('/', methods=['GET'])
@@ -22,31 +45,45 @@ def home():
 
 
 @app.route('/Dashboard', methods=['GET'])
-def Dashboard():
-    dummy = [{
-        "name": "This is some data",
-        "value": 234,
-        "type": "number"
-    },
-        {
-            "name": "This is even more data",
-            "value": 678
-        }]
-    return jsonify(dummy)
+def dashboard():
+    if ctl is None:
+        lg.error("Room Controller not defined!")
+        return 'Internal Server Error!', 500
+    ret = [{
+        "name": "TEst",
+        "value": "Testesetset"
+    }]
+    
+    return jsonify(ret)
 
 
-@app.route('/Settings', methods=['GET'])
-def Settings():
-    dummy = [{
-        "name": "asdfasdfasdf",
-        "value": 2341234
-    },
-        {
-            "name": "sdfgsdfgdsfg",
-            "value": 67823452345
-        }]
-    return jsonify(dummy)
+@app.route('/Gateways', methods=['GET'])
+def gws():
+    if ctl is None:
+        lg.error("Room Controller not defined!")
+        return 'Internal Server Error!', 500
+    ret = []
+    for gw_id in ctl.gateways:
+        gw = ctl.gateways[gw_id]
+        # Adding an empty value as a header
+        append_dict_item(ret, f"{type(gw).__name__} [{gw_id}]", "")
+        append_dict_item(ret, f"online status", gw.status.value)
+    return jsonify(ret)
 
 
-if __name__ =="__main__":
-    app.run()
+@app.route('/Devices', methods=['GET'])
+def devices():
+    if ctl is None:
+        lg.error("Room Controller not defined!")
+        return 'Internal Server Error!', 500
+    ret = []
+
+    for dev in ctl.devices:
+        ret.append({"name": f"{dev.name} ", "value": ""})
+        ret.append({"name": "Current State", "value": f"{dev.state}"})
+        ret.append({"name": "Type", "value": f"{dev.device_type}"})
+        ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
+
+
+    
+    return jsonify(ret)

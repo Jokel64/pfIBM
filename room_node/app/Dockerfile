@@ -11,7 +11,10 @@ COPY . .
 
 
 # Add this:
-ENV FLASK_APP=room_logic.py
+ENV FLASK_APP=main.py
 
-CMD [ "python", "./room_logic.py" ]
+# either production or development (defaults to development if empty...)
+ENV pfIBM-mode=production
+
+CMD [ "python", "./main.py" ]
 #CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
