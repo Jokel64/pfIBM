@@ -2,12 +2,20 @@ from enum import Enum
 from uuid import UUID
 from typing import List
 from datetime import datetime
+from device_drivers.prototypes import Device
+
+import json
 
 
 class OccupantMotionStatus(Enum):
     UNKNOWN = 0
     SITTING = 1
     MOVING = 2
+
+
+class EnvironmentalAwareness(Enum):
+    I_HATE_THE_ENVIRONMENT = 0
+    I_LOVE_THE_ENVIRONMENT = 1
 
 
 class CalendarEntry:
@@ -53,6 +61,7 @@ class HVACCondition:
     def __init__(self):
         self.target_temperature: int = 21  # The Target Temperature the user wants for the office room
         self.allow_cooling: bool = True  # Maybe the user does not want cooling
+        self.allow_heating: bool = True  # Maybe the user does not want heating
 
 
 class ShadingConditions(Enum):
@@ -83,15 +92,31 @@ class OccupantInformation:
         # This item the calendar data of the user is shared
         self.calendar: Calendar = Calendar()
 
+        # This item stores the occupant's mindset about the environment
+        self.environmental_awareness: EnvironmentalAwareness = EnvironmentalAwareness.I_HATE_THE_ENVIRONMENT
+
 
 class SmartphoneInterface:
-    def __init__(self):
+    def __init__(self, device_list: List[Device]):
         self.occupants: List[OccupantInformation] = list()
+        self.device_list: List[Device] = device_list
 
     def send_push_notification(self, notification: str):
         pass
 
-    def set_room_state_object(self):
+    '''
+    This is called at startup to initally transfer all devices to the UE
+    '''
+
+    def send_device_list_to_ue(self):
+        device_list_dumped: str = json.dumps(self.device_list)
+        print(device_list_dumped)
+
+    '''
+    This should be called if the state of the device changes so we can send the updated state to the UE 
+    '''
+
+    def update_device(self, device_to_update: Device):
         pass
 
     def get_current_occupants_information(self):
