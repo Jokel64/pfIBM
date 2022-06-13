@@ -1,0 +1,131 @@
+import time
+from datetime import datetime, timedelta
+import logging as lg
+import threading
+import math
+from perlin_noise import PerlinNoise
+
+
+class SimEngine:
+    def __init__(self, speed=1, dt_start=datetime.now(), fps=60, daemon=True):
+        self.thread = None
+        self.speed = speed
+        self.virtual_time = dt_start
+        self.frame_time = 1/fps
+        self.daemon = daemon
+        self.sun = Sun()
+        self.room = SimulatedRoom()
+        self.outside = OutSide()
+        self.weather_perlin = Noiser()
+        self.weather_perlin_scaler = 0.0005
+        self.radiation_to_space = 0.22
+        self.temperature_inertia = 5
+
+    def __loop(self):
+        while True:
+            # Sim Stuff
+            timestamp = time.time()
+            runtime = (time.time() - timestamp)
+            sim_delta = self.frame_time - runtime
+
+            # The current situation in this timeframe
+            day_of_year = self.virtual_time.timetuple().tm_yday
+            hour_of_day = self.virtual_time.hour
+            sun_intensity = self.sun.get_sun_intensity(day_of_year, hour_of_day) * 1.1
+
+            # Calculations
+            weather_perlin = self.weather_perlin.get_next_value() * self.weather_perlin_scaler
+            self.outside.temperature += weather_perlin
+
+            if not (self.outside.temperature > self.outside.max_temp or self.outside.temperature < self.outside.min_temp):
+                self.outside.temperature += (sun_intensity - self.radiation_to_space) * self.frame_time * self.temperature_inertia
+            print(f"{self.virtual_time.date()} - {self.virtual_time.time()} - {self.outside.temperature}")
+
+
+            # Sim Stuff
+            if sim_delta < 0:
+                lg.error("The physics simulation is overloaded. Please buy better hardware. Thanks.")
+            else:
+                self.virtual_time += timedelta(seconds=self.frame_time*self.speed)
+                #print(self.virtual_time)
+                time.sleep(sim_delta)
+
+    def run_simulation(self):
+        self.thread = threading.Thread(target=self.__loop, daemon=self.daemon)
+        self.thread.start()
+        pass
+
+
+class Sun:
+    def __init__(self):
+        self.sun_angle_variance = 0.4   # 0...1
+        self.cloud_damping_coefficient = 0.9   # 0.5...1
+
+    def get_sun_intensity(self, day_of_year, hour_of_day):
+        day_of_year = day_of_year % 365
+        if day_of_year > 365/2:
+            sun_int = abs(day_of_year - 365) / (365/2)
+        else:
+            sun_int = abs(day_of_year) / (365/2)
+        dyn = sun_int*self.sun_angle_variance + (0.5 - self.sun_angle_variance/2)
+        sun_int_geo_corrected = math.sin(dyn*math.pi/2) * self.cloud_damping_coefficient
+
+        if hour_of_day < 6 or hour_of_day > 18:
+            return 0
+        if hour_of_day < 12:
+            return sun_int_geo_corrected * (hour_of_day - 6) / 6
+        else:
+            return sun_int_geo_corrected * abs(18 - hour_of_day) / 6
+
+
+class SimulatedRoom:
+    def __init__(self, init_temp=22):
+        self.temperature = init_temp
+        self.mean_brightness = 0
+        self.air_quality = 0            # 0...1
+
+        self.thermal_insulation = 0.9   # 0...1
+
+
+class OutSide:
+    def __init__(self, init_temp=0):
+        self.temperature = init_temp
+        self.max_temp = 38
+        self.min_temp = -10
+
+    def get_max_temp(self, day_of_year):
+        day_of_year = day_of_year % 365
+        if day_of_year > 365 / 2:
+            max_temp = abs(day_of_year - 365) / (365 / 2)
+        else:
+            max_temp = abs(day_of_year) / (365 / 2)
+        return max_temp * self.max_temp + 4
+
+    def get_min_temp(self, day_of_year):
+        day_of_year = day_of_year % 365
+        if day_of_year > 365 / 2:
+            min_temp = abs(day_of_year - 365) / (365 / 2)
+        else:
+            min_temp = abs(day_of_year) / (365 / 2)
+        return min_temp * ((self.max_temp - self.min_temp)/2) + self.min_temp
+
+class Noiser:
+    def __init__(self):
+        self.steps = 10000
+        self.current_step = self.steps + 1
+        self.generator = None
+
+    # gives a value between -1 and 1 that can be added to whatever
+    def get_next_value(self):
+        if self.current_step > 10000:
+            self.generator = PerlinNoise()
+            self.current_step = 0
+        val = self.generator(self.current_step / self.steps)
+        self.current_step += 1
+        return val
+
+
+if __name__ == '__main__':
+    sim = SimEngine(daemon=False, speed=36000, fps=36000)
+    sim.run_simulation()
+

@@ -50,8 +50,8 @@ def dashboard():
         lg.error("Room Controller not defined!")
         return 'Internal Server Error!', 500
     ret = [{
-        "name": "TEst",
-        "value": "Testesetset"
+        "name": "Current mean room-brightness",
+        "value": str(ctl.twin.get_brightness()) + " lux"
     }]
     
     return jsonify(ret)
@@ -80,8 +80,8 @@ def devices():
 
     for dev in ctl.devices:
         ret.append({"name": f"{dev.name} ", "value": ""})
-        ret.append({"name": "Current State", "value": f"{dev.state}"})
-        ret.append({"name": "Type", "value": f"{dev.device_type}"})
+        ret.append({"name": "Current State", "value": f"{dev.last_state}"})
+        ret.append({"name": "Type", "value": f"{type(dev)}"})
         ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
 
 

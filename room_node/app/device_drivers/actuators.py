@@ -1,4 +1,4 @@
-from .prototypes import Device, DeviceTypes
+from .prototypes import Actuator, Sensor
 import logging as lg
 
 
@@ -17,14 +17,19 @@ class HVACState:
 
 
 # Main classes
-class Lamp(Device):
+class Lamp(Actuator):
     def __init__(self, **kwargs):
-        super().__init__(DeviceTypes.ACTUATORS, **kwargs)
-        self.state = None
-        self.brightness = 0                                                             # 0...1
+        super().__init__(**kwargs)
+
         self.dimmable = False
         if "class" in kwargs and "dimmable" in kwargs["class"]:
             self.dimmable = True
+
+        self.max_mean_lux = 0
+        if "max_mean_lux" in kwargs:
+            self.max_mean_lux = int(kwargs["max_mean_lux"])
+        else:
+            lg.warning(f"Lamp {self.name} has no lux specified. Defaulting to 0...")
 
         if "addr" in kwargs:
             self.addr = kwargs["addr"]
@@ -32,74 +37,50 @@ class Lamp(Device):
             lg.error("A Lamp needs an address!")
             exit(1)
 
-    def __str__(self):
-        return self.name
-
-    def set_state(self, new_val):
+    def propose(self, new_val):
         if new_val > 1 or new_val < 0:
             lg.error("Brightness set out of bounds!")
-            return
+            return 1
 
         if not self.dimmable and new_val not in [0, 1]:
             lg.error(f"{str(self)} is not dimmable but received a float value!")
-            return
+            return 1
 
-        if self.gateway.delegate_to_physical_device(new_val, addr=self.addr) == 0:
-            self.state = new_val
-        else:
-            self.state = None
+        self.proposed_state = new_val
+        return 0
 
 
-class PowerSocket(Device):
+class PowerSocket(Actuator):
     def __init__(self, **kwargs):
-        super().__init__(DeviceTypes.ACTUATORS, **kwargs)
-        self.state = None
+        super().__init__(**kwargs)
 
-    def __str__(self):
-        return self.name
-
-    def set_state(self, new_state: bool):
+    def propose(self, new_state: bool):
         if type(new_state) != bool:
             lg.error("Power socket can only have boolean states")
-            return
-        if self.gateway.delegate_to_physical_device(new_state) == 0:
-            self.state = new_state
-        else:
-            self.state = None
+            return 1
+        self.proposed_state = new_state
+        return 0
 
 
-class HVAC(Device):
+class HVAC(Actuator):
     def __init__(self, **kwargs):
-        super().__init__(DeviceTypes.ACTUATORS, **kwargs)
-        self.state = None
+        super().__init__(**kwargs)
 
-    def __str__(self):
-        return self.name
-
-    def set_state(self, new_state: HVACState):
+    def propose(self, new_state: HVACState):
         if type(new_state) != HVACState:
             lg.error("HVACs can only have HVAC-states")
-            return
-        if self.gateway.delegate_to_physical_device(new_state) == 0:
-            self.state = new_state
-        else:
-            self.state = None
+            return 1
+        self.proposed_state = new_state
+        return 0
 
 
-class Blinds(Device):
+class WindowBlinds(Actuator):
     def __init__(self, **kwargs):
-        super().__init__(DeviceTypes.ACTUATORS, **kwargs)
-        self.state = None
+        super().__init__(**kwargs)
 
-    def __str__(self):
-        return self.name
-
-    def set_state(self, new_val):
+    def propose(self, new_val):
         if new_val > 1 or new_val < 0:
             lg.error("Blinds level set out of bounds!")
-            return
-
-        if self.gateway.delegate_to_physical_device(new_val) == 0:
-            self.state = new_val
-        else:
-            self.state = None
+            return 1
+        self.proposed_state = new_val
+        return 0

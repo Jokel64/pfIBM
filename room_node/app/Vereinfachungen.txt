@@ -1,0 +1,4 @@
+* Alle Fenster sind Südseitenfenster
+* Der Einfallswinkel der Sonne in einen Raum wird immer als gleich angesehen -> Sonne im Sommer stärker als im Winter.
+* Die geolocation wird ebenfalls ignoriert
+* die Sonne scheint mit allen wellenlängen gleich und wolken haben den gleichen effekt auf alle Wellenlängen

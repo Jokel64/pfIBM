@@ -5,12 +5,15 @@ import logging as lg
 from os.path import exists
 import xml.etree.ElementTree as ET
 from gateway_drivers.phillips_hue import PhillipsHueGateway
+from gateway_drivers.mqtt import MQTTGateway
 from gateway_drivers.i2c import I2cGateway
 from gateway_drivers.pfIBM_sim import PfSim
 from gateway_drivers.prototypes import Gateway
-from device_drivers.prototypes import Device, DeviceTypes
+from device_drivers.prototypes import Device
 from device_drivers.actuators import *
 from device_drivers.sensors import *
+from twin import Twin
+
 
 ROOM_CONFIG = "config/room-config.xml"
 
@@ -26,6 +29,7 @@ class RoomController:
         self.gateways: dict[str, Gateway] = {}
         self.devices: list[Device] = []
         self.load_room_config()
+        self.twin = Twin(self.devices)
 
     def load_room_config(self):
         gateways = self.config.find("gateways")
@@ -41,6 +45,8 @@ class RoomController:
                 self.gateways[id] = I2cGateway(**gw.attrib)
             elif gw.tag == "pfIBM_sim":
                 self.gateways[id] = PfSim(**gw.attrib)
+            elif gw.tag == "MQTT":
+                self.gateways[id] = MQTTGateway(**gw.attrib)
             else:
                 lg.error(f"Gateway of type {gw.tag} is not supported!")
 
@@ -52,17 +58,19 @@ class RoomController:
                 self.devices.append(PowerSocket(gateway_ref=gw, **dv.attrib))
             elif dv.tag == "hvac":
                 self.devices.append(HVAC(gateway_ref=gw, **dv.attrib))
-            elif dv.tag == "blinds":
-                self.devices.append(Blinds(gateway_ref=gw, **dv.attrib))
+            elif dv.tag == "windowblinds":
+                self.devices.append(WindowBlinds(gateway_ref=gw, **dv.attrib))
             else:
                 lg.error(f"The device type {dv.tag} is not supported. Ignoring...")
 
         for dv in devices.find("sensors"):
             gw = self.get_gateway_from_device_definition(dv)
             if dv.tag == "climate":
-                self.devices.append(Climate(gateway_ref=gw, **dv.attrib))
+                self.devices.append(RoomClimate(gateway_ref=gw, **dv.attrib))
             elif dv.tag == "lighting":
                 self.devices.append(Lighting(gateway_ref=gw, **dv.attrib))
+            elif dv.tag == "WeatherInfo":
+                self.devices.append(WeatherInfo(gateway_ref=gw, **dv.attrib))
             else:
                 lg.error(f"The device type {dv.tag} is not supported. Ignoring...")
 
