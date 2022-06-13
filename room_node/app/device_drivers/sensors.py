@@ -29,8 +29,9 @@ class WeatherInfo(Sensor):
         self.client.on_connect = self._on_connect  # Define callback function for successful connection
         self.client.on_message = self._on_message  # Define callback function for receipt of a message
         # client.connect("m2m.eclipse.org", 1883, 60)  # Connect to (broker, port, keepalive-time)
-        #self.client.connect('127.0.0.1', 1883)
-        #self.client.loop_forever()  # Start networking daemon
+        self.client.connect('127.0.0.1', 1883)
+        self.client.loop_forever()  # Start networking daemon
+        self.client.subscribe("/test/yeah")
 
     def _on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
         print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt

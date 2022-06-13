@@ -26,7 +26,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-room_node/app/config/room-config.xml
+#room_node/app/config/room-config.xml
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -80,7 +80,7 @@ target/
 
 # IPython
 profile_default/
-ipython_config.py
+ipython_R.py
 
 # pyenv
 .python-version
