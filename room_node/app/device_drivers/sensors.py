@@ -1,6 +1,9 @@
+import time
+
 from .prototypes import Sensor
 import paho.mqtt.client as mqtt
 import logging as lg
+from room_node.app.gateway_drivers.mqtt import MQTTGateway
 
 
 class RoomClimate(Sensor):
@@ -24,24 +27,21 @@ class Lighting(Sensor):
 class WeatherInfo(Sensor):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.topic = ""
+        if "topic" in kwargs:
+            self.topic = kwargs["topic"]
+        else:
+            lg.error(f"{self.name} does not have a specified weather topic!")
 
-        self.client = mqtt.Client("Weather-Info")  # Create instance of client with client ID “digi_mqtt_test”
-        self.client.on_connect = self._on_connect  # Define callback function for successful connection
-        self.client.on_message = self._on_message  # Define callback function for receipt of a message
-        # client.connect("m2m.eclipse.org", 1883, 60)  # Connect to (broker, port, keepalive-time)
-        self.client.connect('127.0.0.1', 1883)
-        self.client.loop_forever()  # Start networking daemon
-        self.client.subscribe("/test/yeah")
-
-    def _on_connect(client, userdata, flags, rc):  # The callback for when the client connects to the broker
-        print("Connected with result code {0}".format(str(rc)))  # Print result of connection attempt
-        client.subscribe(
-            "digitest/test1")  # Subscribe to the topic “digitest/test1”, receive any messages published on it
-
-    def _on_message(client, userdata, msg):  # The callback for when a PUBLISH message is received from the server.
-        print("Message received-> " + msg.topic + " " + str(msg.payload))  # Print a received msg
-
+        if isinstance(self.gateway, MQTTGateway):
+            counter = 0
+            while not self.gateway.ready:
+                time.sleep(0.1)
+                counter += 1
+                if counter > 50:
+                    lg.error(f"{self.name} couldn't connect to its gateway! This sensor will not work properly!")
+                    break
+            self.gateway.subscribe(self.topic, self.name)
 
     def get_state(self):
-
-        return {"cloudy": 0.8, "sun_lux": 50000}
+        return self.gateway.delegate_from_physical_device(**{"topic": self.topic})

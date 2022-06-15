@@ -19,13 +19,13 @@ ROOM_CONFIG = "config/room-config.xml"
 
 
 class RoomController:
-    def __init__(self):
+    def __init__(self, devmode=False):
         if exists(ROOM_CONFIG):
             self.config = ET.parse(ROOM_CONFIG).getroot()
         else:
             lg.error("No room-config.xml found in config directory! Exiting...")
             exit(1)
-
+        self.devmode = devmode
         self.gateways: dict[str, Gateway] = {}
         self.devices: list[Device] = []
         self.load_room_config()
@@ -49,6 +49,9 @@ class RoomController:
                 self.gateways[id] = MQTTGateway(**gw.attrib)
             else:
                 lg.error(f"Gateway of type {gw.tag} is not supported!")
+
+            # set (global) devmode to gateway
+            self.gateways[id].devmode = self.devmode
 
         for dv in devices.find("actuators"):
             gw = self.get_gateway_from_device_definition(dv)

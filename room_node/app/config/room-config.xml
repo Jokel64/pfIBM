@@ -7,7 +7,7 @@
         <phillips_hue>ph1</phillips_hue>
         <i2c port="GPIO3">i2c_default</i2c>
         <pfIBM_sim>room-sim</pfIBM_sim>
-        <MQTT>mqtt_building</MQTT>
+        <MQTT host="127.0.0.1" port="1883">mqtt_building</MQTT>
     </gateways>
     <devices>
         <actuators>
@@ -20,7 +20,7 @@
         <sensors>
             <climate name="Onboard climate" gateway="i2c_default" address="0x6c" class="sht31" />
             <lighting name="Onboard lighting sensor" gateway="i2c_default" address="0x6d" class="lht687" />
-            <WeatherInfo name="Default Weather Info" gateway="mqtt_building"/>
+            <WeatherInfo name="Default Weather Info" gateway="mqtt_building" topic="/weather"/>
         </sensors>
     </devices>
 </room>

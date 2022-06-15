@@ -3,6 +3,7 @@ from flask import jsonify
 from flask_cors import CORS
 import logging as lg
 from room_controller import RoomController
+from device_drivers.prototypes import *
 
 app = flask.Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -70,6 +71,11 @@ def gws():
         append_dict_item(ret, f"online status", gw.status.value)
     return jsonify(ret)
 
+def cetnv(val):
+    if val == "":
+        return "~No value~"
+    else:
+        return val
 
 @app.route('/Devices', methods=['GET'])
 def devices():
@@ -79,10 +85,16 @@ def devices():
     ret = []
 
     for dev in ctl.devices:
-        ret.append({"name": f"{dev.name} ", "value": ""})
-        ret.append({"name": "Current State", "value": f"{dev.last_state}"})
-        ret.append({"name": "Type", "value": f"{type(dev)}"})
-        ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
+        if isinstance(dev, Actuator):
+            ret.append({"name": f"{dev.name} [Actuator]", "value": ""})
+            ret.append({"name": "Last State", "value": f"{dev.last_state}"})
+            ret.append({"name": "Proposed State", "value": f"{dev.proposed_state}"})
+            ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
+        elif isinstance(dev, Sensor):
+            ret.append({"name": f"{dev.name} [Sensor]", "value": ""})
+            ret.append({"name": "Last State", "value": f"{dev.last_state}"})
+            ret.append({"name": "Current State", "value": f"{cetnv(str(dev.get_state()))}"})
+            ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
 
 
     

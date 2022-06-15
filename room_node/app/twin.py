@@ -27,6 +27,11 @@ class Twin:
             if isinstance(dev, WindowBlinds):
                 if self.weather_info is not None:
                     # Assuming that only 1% of the lux actually comes into the room
-                    lux += dev.proposed_state * (1-self.weather_info.get_state()["cloudy"]) * self.weather_info.get_state()["sun_lux"] * 0.01
+                    try:
+                        cloudy = self.weather_info.get_state()["cloudy"]
+                        sunlux = self.weather_info.get_state()["sun_lux"]
+                        lux += dev.proposed_state * (1-cloudy) * sunlux * 0.01
+                    except Exception as e:
+                        lg.error(f"Couldn't calculate brightness due to error in environment calculation: {e}")
         return lux
 

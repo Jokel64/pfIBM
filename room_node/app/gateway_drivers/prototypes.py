@@ -18,6 +18,7 @@ class ErrorCodes(Enum):
 
 class Gateway:
     def __init__(self):
+        self.devmode = False
         self.status = GatewayStatus.ONLINE
         self.name = "Undefined"
 

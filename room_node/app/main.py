@@ -7,7 +7,7 @@ from device_drivers.actuators import *
 
 if __name__ == "__main__":
     lg.basicConfig(format='[%(levelname)s] %(filename)s: %(message)s', level=lg.DEBUG)
-    rc = RoomController()
+    rc = RoomController(devmode=True)
     set_room_controller(rc)
     for dev in rc.devices:
         if isinstance(dev, WindowBlinds):
@@ -16,4 +16,4 @@ if __name__ == "__main__":
         if isinstance(dev, Lamp):
             dev.propose(1)
 
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", use_reloader=False)
