@@ -53,6 +53,9 @@ def dashboard():
     ret = [{
         "name": "Current mean room-brightness",
         "value": str(ctl.twin.get_brightness()) + " lux"
+    },{
+        "name": "Current room-temperature",
+        "value": str(ctl.twin.get_room_temp()) + "°C"
     }]
     
     return jsonify(ret)

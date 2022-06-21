@@ -35,3 +35,17 @@ class Twin:
                         lg.error(f"Couldn't calculate brightness due to error in environment calculation: {e}")
         return lux
 
+    def get_room_temp(self) -> float:
+        temp = 20
+        if self.weather_info is not None:
+            temp = self.weather_info.get_state()["temp"]
+
+        for dev in self.devices:
+            if isinstance(dev, WindowBlinds):
+                if self.weather_info is not None:
+                    temp += (1-self.weather_info.get_state()["cloudy"])*10*dev.proposed_state
+            if isinstance(dev, Lamp):
+                temp += 0.1
+        return temp
+
+
