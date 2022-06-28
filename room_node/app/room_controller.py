@@ -13,6 +13,7 @@ from device_drivers.prototypes import Device
 from device_drivers.actuators import *
 from device_drivers.sensors import *
 from twin import Twin
+from planner import Planner
 
 
 ROOM_CONFIG = "config/room-config.xml"
@@ -85,3 +86,8 @@ class RoomController:
             lg.error(f"Gateway {gw_name} unknown!")
             exit(1)
         return self.gateways[gw_name]
+
+    def plan(self, goal_type, goal):
+        planner = Planner(self.devices, self.twin)
+        planner.plan(goal, goal_type)
+

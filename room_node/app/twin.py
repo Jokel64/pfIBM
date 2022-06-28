@@ -4,7 +4,8 @@ from device_drivers.sensors import *
 
 
 class Twin:
-    def __init__(self, devices: list[Device]):
+    #def __init__(self, devices: list[Device]):
+    def __init__(self, devices):
         self.devices = devices
         self.weather_info = self._get_weather_info_device()
 
