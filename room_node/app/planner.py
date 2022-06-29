@@ -11,11 +11,19 @@ class Planner:
         self.devices = devices
         self.twin = twin
 
-    def plan(self, goal, goal_type, n_iterations=10000):
+    def plan(self, goal, goal_type, n_iterations=100000):
 
-        # init best values
+        print("start planning")
+
+        #init goal state (for keeping non goal values near the previous value)
+        if goal_type == "temperature":
+            goal_state = {"brightness": self.twin.get_brightness(), "temperature": goal}
+        if goal_type == "brightness":
+            goal_state = {"brightness": goal, "temperature": self.twin.get_room_temp()}
+
+        # init best config and very high best values
         best_config = {}
-        best_value = 1000000
+        best_values = {"brightness": 1000000, "temperature": 1000000}
 
         # episodes
         for _ in range(n_iterations):
@@ -53,28 +61,30 @@ class Planner:
                     # save dev and random value in the current config
                     dev_config[dev] = random_dev_val
 
-            # check for type of the goal and get value from simulation according to the random values
-            if goal_type == "temperature":
-                value = self.twin.get_room_temp()
-            if goal_type == "brightness":
-                value = self.twin.get_brightness()
+            # save values for current config
+            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp()}
+            temp_truth = []
+            # loop over values to check if they are better than the previous best
+            for key, val in values.items():
+                if abs(goal_state[key]-val) < abs((goal_state[key] - best_values[key])):
+                    temp_truth.append(True)
+                else:
+                    temp_truth.append(False)
 
-            # check if the current episode confg is better that the previous best
-            print(goal)
-            print(value)
-            print(best_value)
-            print(goal - value)
-            print(goal - best_value)
-            if abs(goal - value) < abs(goal - best_value):
-                print("better")
-                # save new best values
-                best_value = value
+            # new best only if all values are closer to the goal
+            new_best_state = True
+            for k in temp_truth:
+                new_best_state = new_best_state*k
+
+            # set new best values and config
+            if new_best_state:
+                best_values = values
                 best_config = dev_config
-            else:
-                print("worse")
 
         # loop over best config after n_timesteps
         for dev, val in best_config.items():
 
             #commit best config
             dev.propose_and_commit(val)
+
+        print("finished planning")
