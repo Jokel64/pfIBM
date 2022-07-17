@@ -3,8 +3,10 @@ from uuid import UUID
 from typing import List
 from datetime import datetime
 from device_drivers.prototypes import Device
+from time import sleep
 
 import json
+import socket
 
 
 class OccupantMotionStatus(Enum):
@@ -121,3 +123,18 @@ class SmartphoneInterface:
 
     def get_current_occupants_information(self):
         return self.occupants
+
+
+if __name__ == "__main__":
+
+    msg = b'hello world'
+    while True:
+
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)  # UDP
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        sock.bind(("0.0.0.0",0))
+        sock.sendto(msg, ("224.0.0.0", 5005))
+        sock.close()
+
+        sleep(2)
