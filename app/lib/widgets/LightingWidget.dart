@@ -44,13 +44,13 @@ class _LigthingControllerState extends State<LigthingController> {
                               progressBarWidth: 5, handlerSize: 10),
                         ),
                         min: 0,
-                        max: 7000,
-                        initialValue: 3500,
+                        max: 100,
+                        initialValue: 50,
                         onChangeEnd: (_value) async {
 
 
                           soll_light = _value;
-                          final result = await platform.invokeMethod("light", <String, dynamic>{'l': soll_light}) as double;
+                          final result = await platform.invokeMethod("light", <String, dynamic>{'l': soll_light*10}) as double;
 
                           setState((){ist_light = result;});
 
@@ -92,7 +92,7 @@ class _LigthingControllerState extends State<LigthingController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Soll: ${percentage.toStringAsFixed(0)} Lux',
+                                              'Soll: ${percentage.toStringAsFixed(0)} %',
                                               style: TextStyle(
                                                 fontSize: 23,
                                                 color: Colors.black,
@@ -105,7 +105,7 @@ class _LigthingControllerState extends State<LigthingController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Ist: ${ist_light.toString()} Lux',
+                                              'Ist: ${ist_light.toString()} %',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.black,

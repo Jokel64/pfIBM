@@ -43,11 +43,11 @@ class BLENetworkMock(BLEGattServer):
 
         self.notifications = Queue()
 
-        self.ist_ligting: int = 0
-        self.soll_ligting: int = 0
+        self.ist_ligting: int = 50
+        self.soll_ligting: int = 300
 
         self.ist_temp: int = 0
-        self.soll_temp: int = 0
+        self.soll_temp: int = 20
 
         self.valuesChangedCB = None
 
@@ -93,11 +93,13 @@ class BLENetworkMock(BLEGattServer):
             val_light = vals[0][2:]
             val_temp = vals[1]
 
-            self.soll_temp = float(val_temp)
-            self.soll_ligting = float(val_light)
+            if float(val_light) != self.soll_ligting or float(val_temp) != self.soll_temp:
+                self.soll_temp = float(val_temp)
+                self.soll_ligting = float(val_light)
+                self.valuesChangedCB()
+                print(message)
 
-            #self.valuesChangedCB()
-            print(message)
+
             # Here we need to calulcate the replay
             try:
                 a = self.notifications.get(False)
