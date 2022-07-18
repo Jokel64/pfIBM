@@ -11,7 +11,7 @@
     </gateways>
     <devices>
         <actuators>
-            <lamp name="Ceiling Light" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="0x09" max_mean_lux="400" class="switchable dimmable"/>
+            <lamp name="Ceiling Light" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="0x09" max_mean_lux="5000" class="switchable dimmable"/>
             <powersocket name="Screen Socket" x="1.7" y="2.7" z="0.3" gateway="i2c_default" address="0x5c" register="0x00"  class="i2c_relay"/>
             <powersocket name="PC Socket" x="1.76" y="2.7" z="0.3" gateway="i2c_default" address="0x5c" class="i2c_relay"/>
             <hvac name="Default HVAC" gateway="room-sim" class="heating cooling"/>

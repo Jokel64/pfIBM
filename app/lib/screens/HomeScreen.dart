@@ -1,8 +1,10 @@
+import 'package:app/widgets/BlindsWidget.dart';
 import 'package:app/widgets/CustomButtons.dart';
 import 'package:app/widgets/TemperatureWidget.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+import '../widgets/LightingWidget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -152,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             Column(
-                              children: [ TemeratureController(),]
+                              children: [ getContentWIdget(active_page),]
                             )
 
                           ],
@@ -192,4 +194,15 @@ Container GradientContainer(Size size) {
           ])),
     ),
   );
+}
+
+Widget getContentWIdget(int index){
+  switch (index){
+    case 0:
+      return LigthingController();
+    case 1:
+      return TemperatureController();
+    default:
+      return BlindsController();
+  }
 }
