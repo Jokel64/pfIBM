@@ -11,19 +11,21 @@ class Planner:
         self.devices = devices
         self.twin = twin
 
-    def plan(self, goal, goal_type, n_iterations=100000):
+    def plan(self, goal, goal_type, n_iterations=1e5):
 
         print("start planning")
 
         #init goal state (for keeping non goal values near the previous value)
-        if goal_type == "temperature":
-            goal_state = {"brightness": self.twin.get_brightness(), "temperature": goal}
         if goal_type == "brightness":
-            goal_state = {"brightness": goal, "temperature": self.twin.get_room_temp()}
+            goal_state = {"brightness": goal, "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS()}
+        if goal_type == "temperature":
+            goal_state = {"brightness": self.twin.get_brightness(), "temperature": goal, "EAS": self.twin.get_EAS()}
+        if goal_type == "EAS":
+            goal_state = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": goal}
 
         # init best config and very high best values
         best_config = {}
-        best_values = {"brightness": 1000000, "temperature": 1000000}
+        best_values = {"brightness": 1e6, "temperature": 1e6, "EAS": 1e6}
 
         # episodes
         for _ in range(n_iterations):
@@ -65,10 +67,12 @@ class Planner:
                     dev_config[dev] = random_dev_val
 
             # save values for current config
-            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp()}
+            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS()}
             temp_truth = []
             # loop over values to check if they are better than the previous best
             for key, val in values.items():
+                if key == "EAS":
+                    continue
                 if abs(goal_state[key]-val) < abs((goal_state[key] - best_values[key])):
                     temp_truth.append(True)
                 else:
@@ -78,6 +82,11 @@ class Planner:
             new_best_state = True
             for k in temp_truth:
                 new_best_state = new_best_state*k
+
+            #check if Eanvironmental Awareness Score is satisfied
+            if new_best_state:
+                if values.get("EAS") < goal_state.get("EAS"):
+                    new_best_state = False
 
             # set new best values and config
             if new_best_state:
