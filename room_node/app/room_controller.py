@@ -94,3 +94,7 @@ class RoomController:
         planner = Planner(self.devices, self.twin)
         planner.plan(goal, goal_type, self.EAS)
 
+    def execute_routine(self):
+        planner = Planner(self.devices, self.twin)
+        planner.execute_routine()
+

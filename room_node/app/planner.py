@@ -11,6 +11,9 @@ class Planner:
         self.devices = devices
         self.twin = twin
 
+    def execute_routine(self):
+        pass
+
     def plan(self, goal, goal_type, EAS, n_iterations=1e5):
 
         print(f"start planning for {goal_type} to {goal}")
@@ -67,11 +70,13 @@ class Planner:
                     dev_config[dev] = random_dev_val
 
             # save values for current config
-            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS()}
+            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS(), "CO2": self.twin.get_CO2()}
             temp_truth = []
             # loop over values to check if they are better than the previous best
             for key, val in values.items():
                 if key == "EAS":
+                    continue
+                if key == "CO2":
                     continue
                 if abs(goal_state[key]-val) < abs((goal_state[key] - best_values[key])):
                     temp_truth.append(True)
@@ -83,7 +88,7 @@ class Planner:
             for k in temp_truth:
                 new_best_state = new_best_state*k
 
-            #check if Eanvironmental Awareness Score is satisfied
+            #check if Environmental Awareness Score is satisfied
             if new_best_state:
                 if values.get("EAS") < goal_state.get("EAS"):
                     new_best_state = False
