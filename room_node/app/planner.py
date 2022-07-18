@@ -13,7 +13,7 @@ class Planner:
 
     def plan(self, goal, goal_type, EAS, n_iterations=1e5):
 
-        print("start planning")
+        print(f"start planning for {goal_type} to {goal}")
 
         #init goal state (for keeping non goal values near the previous value)
         if goal_type == "brightness":
@@ -99,4 +99,4 @@ class Planner:
             #commit best config
             dev.propose_and_commit(val)
 
-        print("finished planning")
+        print(f"start planning for {goal_type}")
