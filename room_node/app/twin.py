@@ -21,7 +21,7 @@ class Twin:
         lg.warning("No WeatherInfo Device was found. The lighting will not be able to operate efficiently!")
         return None
 
-    def get_c02(self):
+    def get_co2(self):
         return 0.0004123
 
     def get_EAS(self):
