@@ -48,8 +48,11 @@ class Planner:
                     random_dev_val = random.random()
                     usable_device = True
 
-                # TODO HVAC planning
-                #if isinstance(dev, HVAC):
+                if isinstance(dev, HVAC):
+                    random_temp = random.randrange(10, 40)
+                    random_strength = random.random()
+                    random_dev_val = [random_temp, random_strength]
+                    usable_device = True
 
                 if isinstance(dev, WindowBlinds):
                     random_dev_val = random.random()
