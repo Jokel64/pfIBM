@@ -61,7 +61,7 @@ class HVAC(Actuator):
         self.propose([20, 0])
 
     # value 0: temperature, value 1: intensity
-    def propose(self, new_state: list[float]):
+    def propose(self, new_state):
         if len(new_state) != 2:
             lg.error("HVAC needs 2 states")
             return 1

@@ -31,6 +31,7 @@ class RoomController:
         self.devices: list[Device] = []
         self.load_room_config()
         self.twin = Twin(self.devices)
+        self.EAS = 0.0
 
     def load_room_config(self):
         gateways = self.config.find("gateways")
@@ -88,6 +89,8 @@ class RoomController:
         return self.gateways[gw_name]
 
     def plan(self, goal_type, goal):
+        if goal_type == "EAS":
+            self.EAS = goal
         planner = Planner(self.devices, self.twin)
-        planner.plan(goal, goal_type)
+        planner.plan(goal, goal_type, self.EAS)
 

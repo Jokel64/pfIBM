@@ -11,17 +11,17 @@ class Planner:
         self.devices = devices
         self.twin = twin
 
-    def plan(self, goal, goal_type, n_iterations=1e5):
+    def plan(self, goal, goal_type, EAS, n_iterations=1e5):
 
         print("start planning")
 
         #init goal state (for keeping non goal values near the previous value)
         if goal_type == "brightness":
-            goal_state = {"brightness": goal, "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS()}
+            goal_state = {"brightness": goal, "temperature": self.twin.get_room_temp(), "EAS": EAS}
         if goal_type == "temperature":
-            goal_state = {"brightness": self.twin.get_brightness(), "temperature": goal, "EAS": self.twin.get_EAS()}
+            goal_state = {"brightness": self.twin.get_brightness(), "temperature": goal, "EAS": EAS}
         if goal_type == "EAS":
-            goal_state = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": goal}
+            goal_state = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": EAS}
 
         # init best config and very high best values
         best_config = {}
