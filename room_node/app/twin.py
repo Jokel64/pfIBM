@@ -22,7 +22,7 @@ class Twin:
         return None
 
     def get_co2(self):
-        return 0.0004123
+        return 413
 
     def get_EAS(self):
         curr = 0
