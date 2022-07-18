@@ -3,18 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-class TemperatureController extends StatefulWidget {
+class LigthingController extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _TemperatureControllerState();
+  State<StatefulWidget> createState() => _LigthingControllerState();
 }
 
-class _TemperatureControllerState extends State<TemperatureController> {
+class _LigthingControllerState extends State<LigthingController> {
   static const platform = MethodChannel('samples.flutter.dev/pfibm');
 
-  double ist_temp = 25;
+  double ist_light = 25;
 
-  double soll_temp = 22;
+  double soll_light = 22;
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +43,16 @@ class _TemperatureControllerState extends State<TemperatureController> {
                           customWidths: CustomSliderWidths(
                               progressBarWidth: 5, handlerSize: 10),
                         ),
-                        min: 10,
-                        max: 30,
-                        initialValue: 22,
+                        min: 0,
+                        max: 7000,
+                        initialValue: 3500,
                         onChangeEnd: (_value) async {
 
 
-                          soll_temp = _value;
-                          final result = await platform.invokeMethod("temp", <String, dynamic>{'t': soll_temp}) as double;
+                          soll_light = _value;
+                          final result = await platform.invokeMethod("light", <String, dynamic>{'l': soll_light}) as double;
 
-                          setState((){ist_temp = result;});
+                          setState((){ist_light = result;});
 
 
                         },
@@ -92,7 +92,7 @@ class _TemperatureControllerState extends State<TemperatureController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Soll: ${percentage.toStringAsFixed(0)} °C',
+                                              'Soll: ${percentage.toStringAsFixed(0)} Lux',
                                               style: TextStyle(
                                                 fontSize: 23,
                                                 color: Colors.black,
@@ -105,7 +105,7 @@ class _TemperatureControllerState extends State<TemperatureController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Ist: ${ist_temp.toString()} °C',
+                                              'Ist: ${ist_light.toString()} Lux',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.black,
