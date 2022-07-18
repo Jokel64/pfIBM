@@ -70,7 +70,7 @@ class Planner:
                     dev_config[dev] = random_dev_val
 
             # save values for current config
-            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS(), "CO2": self.twin.get_CO2()}
+            values = {"brightness": self.twin.get_brightness(), "temperature": self.twin.get_room_temp(), "EAS": self.twin.get_EAS(), "CO2": self.twin.get_co2()}
             temp_truth = []
             # loop over values to check if they are better than the previous best
             for key, val in values.items():

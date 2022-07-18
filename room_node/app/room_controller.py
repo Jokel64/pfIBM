@@ -1,3 +1,4 @@
+import time
 from enum import Enum
 
 import logging as lg
@@ -14,6 +15,10 @@ from device_drivers.actuators import *
 from device_drivers.sensors import *
 from twin import Twin
 from planner import Planner
+from inspect import getmembers, isfunction
+from threading import Thread
+import routines
+from room_node.app.ble_interface import BLENetworkMock
 
 
 ROOM_CONFIG = "config/room-config.xml"
@@ -32,6 +37,10 @@ class RoomController:
         self.load_room_config()
         self.twin = Twin(self.devices)
         self.EAS = 0.0
+        self.routine_thread = Thread(target=self._run_routines)
+        self.routine_thread.start()
+        self.ble_interface = BLENetworkMock()
+        self.ble_interface.registerNewValuesCB(self.ble_value_cb)
 
     def load_room_config(self):
         gateways = self.config.find("gateways")
@@ -81,6 +90,13 @@ class RoomController:
 
         lg.info("Config loaded successfully!")
 
+    def ble_value_cb(self):
+        self.ble_interface.ist_temp = self.twin.get_room_temp()
+        self.ble_interface.ist_ligting = self.twin.get_brightness()
+
+        self.plan("brightness", self.ble_interface.soll_ligting)
+        self.plan("temperature", self.ble_interface.soll_temp)
+
     def get_gateway_from_device_definition(self, device: ET):
         gw_name = device.attrib["gateway"]
         if not gw_name in self.gateways:
@@ -97,4 +113,12 @@ class RoomController:
     def execute_routine(self):
         planner = Planner(self.devices, self.twin)
         planner.execute_routine()
+
+    def _run_routines(self):
+        while True:
+            time.sleep(10)
+
+            for name, func in getmembers(routines, isfunction):
+                func(self)
+
 
