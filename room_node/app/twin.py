@@ -9,12 +9,25 @@ class Twin:
         self.devices = devices
         self.weather_info = self._get_weather_info_device()
 
+        self.total_max_watts = 0
+        for dev in devices:
+            if isinstance(dev, Actuator):
+                self.total_max_watts += dev.max_watts
+
     def _get_weather_info_device(self):
         for dev in self.devices:
             if isinstance(dev, WeatherInfo):
                 return dev
         lg.warning("No WeatherInfo Device was found. The lighting will not be able to operate efficiently!")
         return None
+
+    def get_EAS(self):
+        curr = 0
+        for dev in self.devices:
+            if isinstance(dev, Actuator):
+                curr += dev.get_current_proposed_watts()
+
+        return curr / self.total_max_watts
 
     def get_brightness(self):
         lux = 0

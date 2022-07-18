@@ -19,7 +19,8 @@ if __name__ == "__main__":
         if isinstance(dev, Lamp):
             dev.propose(1)
 
-    rc.plan("brightness", 370)
-    rc.plan("temperature", 35)
+    rc.plan("brightness", 420)
+    rc.plan("temperature", 20)
+    rc.plan("EAS", 0.4)
 
     app.run(host="0.0.0.0", use_reloader=False)

@@ -58,6 +58,7 @@ class PowerSocket(Actuator):
 class HVAC(Actuator):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.propose([20, 0])
 
     # value 0: temperature, value 1: intensity
     def propose(self, new_state: list[float]):
@@ -66,6 +67,9 @@ class HVAC(Actuator):
             return 1
         self.proposed_state = new_state
         return 0
+
+    def get_current_proposed_watts(self):
+        return self.max_watts * self.proposed_state[1]
 
 
 class WindowBlinds(Actuator):

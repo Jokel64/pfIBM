@@ -28,7 +28,7 @@ class Planner:
         best_values = {"brightness": 1e6, "temperature": 1e6, "EAS": 1e6}
 
         # episodes
-        for _ in range(n_iterations):
+        for _ in range(int(n_iterations)):
 
             # init current config
             dev_config = {}

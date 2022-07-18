@@ -93,6 +93,8 @@ def devices():
             ret.append({"name": "Last State", "value": f"{dev.last_state}"})
             ret.append({"name": "Proposed State", "value": f"{dev.proposed_state}"})
             ret.append({"name": "Gateway", "value": f"{dev.gateway.name}"})
+            ret.append({"name": "Current Watts", "value": f"{dev.get_current_proposed_watts()} W"})
+            ret.append({"name": "Maximum Watts", "value": f"{dev.max_watts} W"})
         elif isinstance(dev, Sensor):
             ret.append({"name": f"{dev.name} [Sensor]", "value": ""})
             ret.append({"name": "Last State", "value": f"{dev.last_state}"})

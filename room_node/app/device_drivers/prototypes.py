@@ -24,7 +24,7 @@ class Actuator(Device):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.proposed_state = None
-
+        self.max_watts = float(kwargs["watt"])
     """
     Proposes a new state that needs to be checked. 
     !Sets self.proposed_state & self.proposed_valid
@@ -50,3 +50,14 @@ class Actuator(Device):
             self.commit()
         else:
             lg.error("Error committing proposed value to the gateway.")
+
+    """
+    Calculates its current energy consumption
+    """
+    def get_current_proposed_watts(self):
+        if isinstance(self.proposed_state, float) or isinstance(self.proposed_state, int):
+            return self.max_watts * self.proposed_state
+        else:
+            lg.error(f"{self.name} doesnt have a valid defintion of get_current-proposed_watts as its proposed state "
+                     f"is non-numerical")
+            return 0
