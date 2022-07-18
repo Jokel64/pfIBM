@@ -4,15 +4,8 @@ import logging as lg
 
 # Helper classes
 class HVACState:
-    class VentilationStrength:
-        OFF = 0
-        L1 = 1
-        L2 = 2
-        MAX = 3
-
-    def __init__(self, temperature: float, humidity: float, ventilation_strength: VentilationStrength):
+    def __init__(self, temperature: float, ventilation_strength: float):
         self.temperature = temperature
-        self.humidity = humidity
         self.ventilation_strength = ventilation_strength
 
 
@@ -66,9 +59,10 @@ class HVAC(Actuator):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def propose(self, new_state: HVACState):
-        if type(new_state) != HVACState:
-            lg.error("HVACs can only have HVAC-states")
+    # value 0: temperature, value 1: intensity
+    def propose(self, new_state: list[float]):
+        if len(new_state) != 2:
+            lg.error("HVAC needs 2 states")
             return 1
         self.proposed_state = new_state
         return 0

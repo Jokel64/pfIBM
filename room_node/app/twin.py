@@ -37,7 +37,7 @@ class Twin:
         return lux
 
     def get_room_temp(self) -> float:
-        temp = 20
+        temp = 5
         if self.weather_info is not None:
             temp = self.weather_info.get_state()["temp"]
 
@@ -47,6 +47,11 @@ class Twin:
                     temp += (1-self.weather_info.get_state()["cloudy"])*10*dev.proposed_state
             if isinstance(dev, Lamp):
                 temp += 0.1
+            if isinstance(dev, HVAC) and isinstance(dev.proposed_state, list) and len(dev.proposed_state) == 2:
+                if dev.proposed_state[1] == 1:
+                    return dev.proposed_state[0]
+                else:
+                    temp += (dev.proposed_state[0] - temp) * dev.proposed_state[1]
         return temp
 
 
