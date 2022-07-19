@@ -4,14 +4,15 @@
         <desk x="4, 0, 0.7"/>
     </props>
     <gateways>
-        <phillips_hue ip="127.0.0.1">ph1</phillips_hue>
+        <phillips_hue ip="192.168.2.68">ph1</phillips_hue>
         <i2c port="GPIO3">i2c_default</i2c>
         <pfIBM_sim>room-sim</pfIBM_sim>
         <MQTT host="127.0.0.1" port="1883">mqtt_building</MQTT>
     </gateways>
     <devices>
         <actuators>
-            <lamp name="Ceiling Light" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="1" max_mean_lux="400" class="switchable dimmable" watt="10"/>
+            <lamp name="Ceiling Light" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="17" max_mean_lux="400" class="switchable dimmable" watt="10"/>
+            <!-- <lamp name="Ceiling Light 2" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="18" max_mean_lux="400" class="switchable dimmable" watt="10"/> -->
             <hvac name="Default HVAC" gateway="room-sim" class="heating cooling" watt="1000"/>
             <windowblinds name="Blinds East" x="4" y="0" z="1.25" gateway="i2c_default" address="0x5d" register="0x00" class="i2c_blinds" watt="1"/>
         </actuators>

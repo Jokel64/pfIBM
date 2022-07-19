@@ -5,11 +5,11 @@ from phue import Bridge
 
 class PhillipsHueGateway(Gateway):
     def __init__(self, **kwargs):
+        self.ip = kwargs["ip"]
         super().__init__()
         self.name = "Phillips Hue"
         self.init_physical_gateway()
-        self.bridge = None
-        self.ip = kwargs["ip"]
+        #self.bridge = None # WISOOOOOOOO ??????
         self.last_values = dict()
 
     def init_physical_gateway(self):
@@ -22,8 +22,12 @@ class PhillipsHueGateway(Gateway):
             return ErrorCodes.GENERAL_ERROR
 
         addr = int(kwargs["addr"])
-        self.bridge.set_light(addr, value)
-        self.last_values[addr] = value
+        print(f"HUE - setting {addr} to {value}")
+        if self.bridge is not None:
+
+            self.bridge.set_light(addr,'on', True)
+            self.bridge.set_light(addr, 'bri', int(value * 255))
+            self.last_values[addr] = value
 
         return ErrorCodes.SUCCESS
 

@@ -43,7 +43,7 @@ class Lamp(Actuator):
         return 0
 
     def commit(self):
-        if self.gateway.delegate_to_physical_device(self.proposed_state, self.addr) == 0:
+        if self.gateway.delegate_to_physical_device(self.proposed_state, **{"addr":self.addr}) == 0:
             self.last_state = self.proposed_state
             return 0
         else:
