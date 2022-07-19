@@ -7,6 +7,8 @@ lastCo2Value = 800
 def co2_checker(room_ctl):
     global lastCo2Value
 
+    print(f"CO2 - Routine Called {lastCo2Value} : {room_ctl.twin.get_co2()}")
+
     if room_ctl.twin.get_co2() > 1000 and lastCo2Value < 1000:
         room_ctl.ble_interface.notifications.put("Please Open the Window C02 level is belastend")
         lastCo2Value = room_ctl.twin.get_co2()
