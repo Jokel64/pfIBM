@@ -41,6 +41,8 @@ class RoomController:
         self.routine_thread.start()
         self.ble_interface = BLENetworkMock()
         self.ble_interface.registerNewValuesCB(self.ble_value_cb)
+        self.ble_interface.registerUpdateValuesCB(self.updateValues)
+
 
     def load_room_config(self):
         gateways = self.config.find("gateways")
@@ -90,10 +92,11 @@ class RoomController:
 
         lg.info("Config loaded successfully!")
 
-    def ble_value_cb(self):
+    def updateValues(self):
         self.ble_interface.ist_temp = self.twin.get_room_temp()
         self.ble_interface.ist_ligting = self.twin.get_brightness()
 
+    def ble_value_cb(self):
         self.plan("brightness", self.ble_interface.soll_ligting)
         self.plan("temperature", self.ble_interface.soll_temp)
 

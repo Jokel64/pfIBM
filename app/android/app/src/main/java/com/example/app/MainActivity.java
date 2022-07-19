@@ -32,12 +32,19 @@ public class MainActivity extends FlutterActivity {
                             switch (method_name){
                                 case "temp":
                                     RoomState.soll_temperature = call.argument("t");
-                                    result.success(RoomState.ist_temperature);
+                                    result.success(RoomState.getIstTemp());
                                     break;
                                 case "light":
                                     RoomState.soll_lightnig = call.argument("l");
-                                    result.success(RoomState.ist_lightnig);
+                                    result.success(RoomState.getIstLight());
                                     break;
+                                case "temp_soll":
+                                    result.success(RoomState.soll_temperature);
+                                    break;
+                                case "temp_ist":
+                                    result.success(RoomState.getIstTemp());
+                                    break;
+
                                 default:
                                     break;
                             }
