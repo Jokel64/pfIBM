@@ -9,7 +9,7 @@ from room_node.app.ble_interface import BLENetworkMock
 
 if __name__ == "__main__":
     #lg.basicConfig(format='[%(levelname)s] %(filename)s: %(message)s', level=lg.DEBUG)
-    rc = RoomController(devmode=True)
+    rc = RoomController(devmode=False)
     set_room_controller(rc)
 
     # init some values (neccessary for twin calculations before planning)

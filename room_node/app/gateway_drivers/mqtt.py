@@ -81,6 +81,8 @@ class MQTTGateway(Gateway):
     def handle_devmode(self, **kwargs):
         if kwargs["topic"] == "/weather":
             return {"cloudy": 0.8, "sun_lux": 50000, "temp": 20}
+        elif kwargs["topic"] == "/co2":
+            return 414
         return "no dev mode value specified."
 
 

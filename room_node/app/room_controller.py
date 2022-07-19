@@ -87,6 +87,8 @@ class RoomController:
                 self.devices.append(Lighting(gateway_ref=gw, **dv.attrib))
             elif dv.tag == "WeatherInfo":
                 self.devices.append(WeatherInfo(gateway_ref=gw, **dv.attrib))
+            elif dv.tag == "co2":
+                self.devices.append(CO2(gateway_ref=gw, **dv.attrib))
             else:
                 lg.error(f"The device type {dv.tag} is not supported. Ignoring...")
 

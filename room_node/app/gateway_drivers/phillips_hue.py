@@ -5,16 +5,22 @@ from phue import Bridge
 
 class PhillipsHueGateway(Gateway):
     def __init__(self, **kwargs):
+        self.bridge = None
         self.ip = kwargs["ip"]
         super().__init__()
         self.name = "Phillips Hue"
         self.init_physical_gateway()
         #self.bridge = None # WISOOOOOOOO ??????
         self.last_values = dict()
+        self.error = False
 
     def init_physical_gateway(self):
-        self.bridge = Bridge(self.ip)
-        self.bridge.connect()
+        try:
+            self.bridge = Bridge(self.ip)
+            self.bridge.connect()
+        except Exception as e:
+            lg.error(f"Couldnt connect to PHUE: {e}")
+            self.error = True
 
     def delegate_to_physical_device(self, value, **kwargs):
         if "addr" not in kwargs:
@@ -23,7 +29,7 @@ class PhillipsHueGateway(Gateway):
 
         addr = int(kwargs["addr"])
         print(f"HUE - setting {addr} to {value}")
-        if self.bridge is not None:
+        if self.bridge is not None and not self.error:
 
             self.bridge.set_light(addr,'on', True)
             self.bridge.set_light(addr, 'bri', int(value * 255))

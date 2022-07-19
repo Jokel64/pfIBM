@@ -22,6 +22,10 @@ class Twin:
         return None
 
     def get_co2(self):
+        for dev in self.devices:
+            if isinstance(dev, CO2):
+                return dev.get_state()
+
         return 413
 
     def get_EAS(self):

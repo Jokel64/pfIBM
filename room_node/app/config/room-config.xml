@@ -20,6 +20,7 @@
             <climate name="Onboard climate" gateway="i2c_default" address="0x6c" class="sht31" />
             <lighting name="Onboard lighting sensor" gateway="i2c_default" address="0x6d" class="lht687" />
             <WeatherInfo name="Default Weather Info" gateway="mqtt_building" topic="/weather"/>
+            <co2 name="Mqtt co2 sensor" gateway="mqtt_building" topic="/co2"/>
         </sensors>
     </devices>
 </room>
