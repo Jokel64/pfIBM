@@ -1,6 +1,9 @@
 package com.example.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 
@@ -70,9 +73,11 @@ public class MainActivity extends FlutterActivity {
         super.onCreate(savedInstanceState, persistentState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onStart() {
         super.onStart();
+        motionSensor = new MotionSensor((SensorManager) getSystemService(Context.SENSOR_SERVICE));
         this.c_sensor.getEvents(getContentResolver());
         System.out.println("Hello World");
         startService(new Intent(this, pfibmBackgroundService.class));

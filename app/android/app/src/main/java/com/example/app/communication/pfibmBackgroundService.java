@@ -30,7 +30,7 @@ public class pfibmBackgroundService extends Service {
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 try {
-                    pfibmBackgroundService.this.socket = new Socket("192.168.2.96", 5005);
+                    pfibmBackgroundService.this.socket = new Socket("192.168.2.82", 5005);
                     BufferedReader in = new BufferedReader(new InputStreamReader(pfibmBackgroundService.this.socket.getInputStream()));
                     while (!pfibmBackgroundService.this.shouldStop) {
                         String instr = in.readLine();
