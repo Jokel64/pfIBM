@@ -88,7 +88,7 @@ class Planner:
 
             #check if Environmental Awareness Score is satisfied
             if new_best_state:
-                if values.get("EAS") < goal_state.get("EAS"):
+                if values.get("EAS") > 1-goal_state.get("EAS"):
                     new_best_state = False
 
             # set new best values and config
