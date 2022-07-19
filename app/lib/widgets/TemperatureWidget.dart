@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -13,11 +15,25 @@ class _TemperatureControllerState extends State<TemperatureController> {
   static const platform = MethodChannel('samples.flutter.dev/pfibm');
 
   double ist_temp = 25;
-
   double soll_temp = 22;
+
+  void _startTimer() {
+    // Disable the button after it has been pressed
+
+    Timer(const Duration(seconds: 1),() async {
+      final ist_temp_v = await platform.invokeMethod("temp_ist") as double;
+      final soll_temp_v =  await platform.invokeMethod("temp_soll") as double;
+
+      setState(() {
+        ist_temp = ist_temp_v;
+        soll_temp = soll_temp_v;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    _startTimer();
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +61,7 @@ class _TemperatureControllerState extends State<TemperatureController> {
                         ),
                         min: 10,
                         max: 30,
-                        initialValue: 22,
+                        initialValue: soll_temp,
                         onChangeEnd: (_value) async {
 
 
@@ -105,7 +121,7 @@ class _TemperatureControllerState extends State<TemperatureController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Ist: ${ist_temp.toString()} °C',
+                                              'Ist: ${ist_temp} °C',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.black,
