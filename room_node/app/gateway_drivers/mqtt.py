@@ -1,4 +1,5 @@
 import time
+import json
 
 if __name__ == "__main__":
     from prototypes import Gateway
@@ -39,6 +40,7 @@ class MQTTGateway(Gateway):
 
     def _on_message(self, client, userdata, msg):
         lg.debug(f"{self.name} message received-> " + msg.topic + " " + str(msg.payload))
+        print(f"{self.name} message received-> " + msg.topic + " " + str(msg.payload))
         self.last_messages[msg.topic] = msg.payload.decode("utf-8")
 
     def _loop(self):
@@ -67,11 +69,11 @@ class MQTTGateway(Gateway):
         pass
 
     def delegate_from_physical_device(self, **kwargs):
-        if self.devmode:
+        if self.devmode or self.last_messages[kwargs["topic"]] == '':
             res = self.handle_devmode(**kwargs)
             return res
         if "topic" in kwargs:
-            return self.last_messages[kwargs["topic"]]
+            return json.loads(self.last_messages[kwargs["topic"]])
         else:
             lg.error(f"{self.name} delegation needs a topic!")
             return None

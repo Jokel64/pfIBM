@@ -2,7 +2,7 @@ import python_weather
 import asyncio
 import paho.mqtt.publish as publish
 from datetime import datetime
-
+import json
 
 
 
@@ -50,8 +50,11 @@ async def get_weather():
         sun_lux = 5
 
     if cloudy != 0.0:
-        publish.single("/weather", str(cloudy)+str(sun_lux)+str(weather.current.temperature))
-        print(f"published: cloudy: {cloudy}, sun_lux: {sun_lux}, temp: {weather.current.temperature}")
+        message_dict = {"cloudy": cloudy, "sun_lux": sun_lux, "temp": weather.current.temperature}
+        message = json.dumps(message_dict)
+        publish.single("/weather", message)
+        print(json.loads(message))
+        #print(f"published: cloudy: {cloudy}, sun_lux: {sun_lux}, temp: {weather.current.temperature}")
     else:
         print("did not attempt publish since weather data did not load")
 
