@@ -5,6 +5,7 @@ import os
 import planner
 
 from device_drivers.actuators import *
+from room_node.app.ble_interface import BLENetworkMock
 
 if __name__ == "__main__":
     #lg.basicConfig(format='[%(levelname)s] %(filename)s: %(message)s', level=lg.DEBUG)

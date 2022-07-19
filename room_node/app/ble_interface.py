@@ -50,6 +50,7 @@ class BLENetworkMock(BLEGattServer):
         self.soll_temp: int = 20
 
         self.valuesChangedCB = None
+        self.valuesUpdatedCB = None
 
     def start_advertising(self):
         pass
@@ -66,6 +67,9 @@ class BLENetworkMock(BLEGattServer):
 
     def registerNewValuesCB(self, callback):
         self.valuesChangedCB = callback
+
+    def registerUpdateValuesCB(self, callback):
+        self.valuesUpdatedCB  = callback
 
     def broadcast_receiver_thread(self):
         ServerSocket = socket.socket()
@@ -92,6 +96,8 @@ class BLENetworkMock(BLEGattServer):
 
             val_light = vals[0][2:]
             val_temp = vals[1]
+
+            self.valuesUpdatedCB()
 
             if float(val_light) != self.soll_ligting or float(val_temp) != self.soll_temp:
                 self.soll_temp = float(val_temp)
