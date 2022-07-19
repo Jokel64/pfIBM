@@ -48,6 +48,7 @@ class BLENetworkMock(BLEGattServer):
 
         self.ist_temp: int = 0
         self.soll_temp: int = 20
+        self.eco_score : int = 0
 
         self.valuesChangedCB = None
         self.valuesUpdatedCB = None
@@ -96,12 +97,14 @@ class BLENetworkMock(BLEGattServer):
 
             val_light = vals[0][2:]
             val_temp = vals[1]
+            val_eco = vals[2]
 
             self.valuesUpdatedCB()
 
-            if float(val_light) != self.soll_ligting or float(val_temp) != self.soll_temp:
+            if float(val_light) != self.soll_ligting or float(val_temp) != self.soll_temp or float(val_eco) != self.eco_score:
                 self.soll_temp = float(val_temp)
                 self.soll_ligting = float(val_light)
+                self.eco_score = float(val_eco)
                 self.valuesChangedCB()
                 print(message)
 

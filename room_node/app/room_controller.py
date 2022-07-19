@@ -98,9 +98,12 @@ class RoomController:
         self.ble_interface.ist_temp = self.twin.get_room_temp()
         self.ble_interface.ist_ligting = self.twin.get_brightness()
 
+
     def ble_value_cb(self):
+
         self.plan("brightness", self.ble_interface.soll_ligting)
         self.plan("temperature", self.ble_interface.soll_temp)
+        self.plan("EAS", self.ble_interface.eco_score)
 
     def get_gateway_from_device_definition(self, device: ET):
         gw_name = device.attrib["gateway"]

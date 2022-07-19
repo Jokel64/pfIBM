@@ -102,7 +102,7 @@ public class pfibmBackgroundService extends Service {
         new Thread(new Runnable() {
             public void run() {
                 while (!pfibmBackgroundService.this.shouldStop) {
-                    pfibmBackgroundService.this.sendMessage(RoomState.soll_lightnig + ";" + RoomState.soll_temperature + "\n");
+                    pfibmBackgroundService.this.sendMessage(RoomState.soll_lightnig + ";" + RoomState.soll_temperature + ";"+ RoomState.energy_score + "\n");
                     try {
                         Thread.sleep(1000);
                     } catch (Exception e) {
