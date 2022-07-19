@@ -1,3 +1,8 @@
+import os, sys
+projectDirectory = os.getcwd()
+projectDirectory = os.path.join(projectDirectory, os.pardir)
+projectDirectory = os.path.join(projectDirectory, os.pardir)
+sys.path.append(projectDirectory)
 from rest_api import app, set_room_controller
 import logging as lg
 from room_controller import RoomController
