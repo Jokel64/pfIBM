@@ -15,6 +15,7 @@
             <!-- <lamp name="Ceiling Light 2" x="2.5" y="1.5" z="2.5" gateway="ph1" addr="18" max_mean_lux="400" class="switchable dimmable" watt="10"/> -->
             <hvac name="Default HVAC" gateway="room-sim" class="heating cooling" watt="1000"/>
             <windowblinds name="Blinds East" x="4" y="0" z="1.25" gateway="i2c_default" address="0x5d" register="0x00" class="i2c_blinds" watt="1"/>
+            <MQTTExporter name="building_mqtt_exporter" gateway="mqtt_building" topic="/room432/energy-consumption" watt="0" misc="True"/>
         </actuators>
         <sensors>
             <climate name="Onboard climate" gateway="i2c_default" address="0x6c" class="sht31" />

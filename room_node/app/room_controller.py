@@ -76,6 +76,8 @@ class RoomController:
                 self.devices.append(HVAC(gateway_ref=gw, **dv.attrib))
             elif dv.tag == "windowblinds":
                 self.devices.append(WindowBlinds(gateway_ref=gw, **dv.attrib))
+            elif dv.tag == "MQTTExporter":
+                self.devices.append(MQTTExporter(gateway_ref=gw, **dv.attrib))
             else:
                 lg.error(f"The device type {dv.tag} is not supported. Ignoring...")
 

@@ -66,7 +66,14 @@ class MQTTGateway(Gateway):
         self.loop_thread.start()
 
     def delegate_to_physical_device(self, value, **kwargs):
-        pass
+        if not self.ready:
+            lg.error("MQTT-Gateway couldnt send message as it is not ready yet.")
+            return
+        if "topic" not in kwargs:
+            lg.error("MQTT-Gateway delegate to physical needs a topic in kwargs")
+            return
+        print(f"Sending {value} to {kwargs['topic']}")
+        self._client.publish(kwargs["topic"], value)
 
     def delegate_from_physical_device(self, **kwargs):
         if self.devmode or self.last_messages[kwargs["topic"]] == '':

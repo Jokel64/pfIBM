@@ -36,6 +36,13 @@ class Twin:
 
         return curr / self.total_max_watts
 
+    def get_total_current_consumption(self):
+        curr = 0
+        for dev in self.devices:
+            if isinstance(dev, Actuator):
+                curr += dev.get_current_proposed_watts()
+        return curr
+
     def get_brightness(self):
         lux = 0
 

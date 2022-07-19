@@ -25,6 +25,10 @@ class Actuator(Device):
         super().__init__(**kwargs)
         self.proposed_state = None
         self.max_watts = float(kwargs["watt"])
+        if "misc" in kwargs:
+            self.misc = True
+        else:
+            self.misc = False
     """
     Proposes a new state that needs to be checked. 
     !Sets self.proposed_state & self.proposed_valid
@@ -55,6 +59,8 @@ class Actuator(Device):
     Calculates its current energy consumption
     """
     def get_current_proposed_watts(self):
+        if self.misc:
+            return 0
         if isinstance(self.proposed_state, float) or isinstance(self.proposed_state, int):
             return self.max_watts * self.proposed_state
         else:

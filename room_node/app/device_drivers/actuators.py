@@ -90,3 +90,17 @@ class WindowBlinds(Actuator):
             return 1
         self.proposed_state = new_val
         return 0
+
+
+class MQTTExporter(Actuator):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.topic = ""
+        if "topic" in kwargs:
+            self.topic = kwargs["topic"]
+        else:
+            lg.error(f"{self.name} does not have a specified weather topic!")
+
+    def propose_and_commit(self, new_val):
+        self.gateway.delegate_to_physical_device(new_val, **{"topic": self.topic})
+
