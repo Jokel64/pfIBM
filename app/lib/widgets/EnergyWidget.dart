@@ -5,28 +5,25 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 
-class LightController extends StatefulWidget {
+class EnergyController extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _LightControllerState();
+  State<StatefulWidget> createState() => _EnergyControllerState();
 }
 
-class _LightControllerState extends State<LightController> {
+class _EnergyControllerState extends State<EnergyController> {
   static const platform = MethodChannel('samples.flutter.dev/pfibm');
 
-  double ist_light = 25;
-  double soll_light = 50;
+  double soll_energy = 0;
 
   void _startTimer() {
     // Disable the button after it has been pressed
 
     Timer(const Duration(seconds: 1),() async {
-      final ist_temp_v = await platform.invokeMethod("light_ist") as double;
-      final soll_temp_v =  await platform.invokeMethod("light_soll") as double;
+      final soll_temp_v =  await platform.invokeMethod("energy_get") as double;
 
       setState(() {
-        ist_light = ist_temp_v;
-        soll_light = soll_temp_v;
+        soll_energy = soll_temp_v * 100;
       });
     });
   }
@@ -61,14 +58,12 @@ class _LightControllerState extends State<LightController> {
                         ),
                         min: 0,
                         max: 100,
-                        initialValue: soll_light,
+                        initialValue: soll_energy,
                         onChangeEnd: (_value) async {
 
 
-                          soll_light = _value;
-                          final result = await platform.invokeMethod("light", <String, dynamic>{'l': soll_light*10}) as double;
-
-                          setState((){ist_light = result;});
+                          soll_energy = _value;
+                          await platform.invokeMethod("energy", <String, dynamic>{'e': soll_energy/100}) as double;
 
 
                         },
@@ -121,7 +116,7 @@ class _LightControllerState extends State<LightController> {
                                           ),
                                           Center(
                                             child: Text(
-                                              'Ist: ${ist_light} %',
+                                              'Eco Score',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 color: Colors.black,

@@ -1,4 +1,4 @@
-import 'package:app/widgets/BlindsWidget.dart';
+import 'package:app/widgets/EnergyWidget.dart';
 import 'package:app/widgets/CustomButtons.dart';
 import 'package:app/widgets/TemperatureWidget.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(width: 10),
                                 HomeButton(image: "assets/hvac.png", text: "Climate", isSelected: active_page == 1, onTap: (){setState((){active_page = 1;});}),
                                 SizedBox(width: 10),
-                                HomeButton(image: "assets/blinds.png", text: "Blinds", isSelected: active_page == 2, onTap: (){setState((){active_page = 2;});}),
+                                HomeButton(image: "assets/eco.png", text: "Eco Score", isSelected: active_page == 2, onTap: (){setState((){active_page = 2;});}),
                                 SizedBox(width: 10),
                           ],
                         ),
@@ -199,10 +199,10 @@ Container GradientContainer(Size size) {
 Widget getContentWIdget(int index){
   switch (index){
     case 0:
-      return LigthingController();
+      return LightController();
     case 1:
       return TemperatureController();
     default:
-      return BlindsController();
+      return EnergyController();
   }
 }

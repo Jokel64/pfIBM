@@ -44,6 +44,19 @@ public class MainActivity extends FlutterActivity {
                                 case "temp_ist":
                                     result.success(RoomState.getIstTemp());
                                     break;
+                                case "light_soll":
+                                    result.success(RoomState.soll_lightnig / 10);
+                                    break;
+                                case "light_ist":
+                                    result.success(RoomState.getIstLight());
+                                    break;
+                                case "energy":
+                                    RoomState.energy_score = call.argument("e");
+                                    result.success(0);
+                                    break;
+                                case "energy_get":
+                                    result.success(RoomState.energy_score);
+                                    break;
 
                                 default:
                                     break;
